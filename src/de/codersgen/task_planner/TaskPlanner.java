@@ -1,4 +1,4 @@
-package com.sogeti.task_planner;
+package de.codersgen.task_planner;
 
 import java.awt.EventQueue;
 

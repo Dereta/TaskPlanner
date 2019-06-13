@@ -1,11 +1,11 @@
-package com.sogeti.tests;
+package de.codersgen.task_planner.tests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import com.sogeti.task_planner.Utils;
+import de.codersgen.task_planner.Utils;
 
 public class MyTests
 {
