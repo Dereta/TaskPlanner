@@ -1,8 +1,14 @@
 # TaskPlanner
 
 Diese Applikation ist mein Abschlussprojekt für meine Ausbildung.
+Es wurde während meines Praktikums bei der Sogeti High Tech in München entwickelt.
 
-### Wichtige Punkte während der Entwicklung
+### Eckdaten
+* Java als Programmiersprache
+* Java Swing als Entwicklungssprache der GUI
+* SQLite zum Speichern der Aufgaben
+
+### Wichtige Aufgabenpunkte während der Entwicklung
 * Sauberer Code
 * Ausreichend und aussagekräftige Kommentare
 * Performanter Code
@@ -16,5 +22,3 @@ Diese Applikation ist mein Abschlussprojekt für meine Ausbildung.
 * Bearbeiten der Aufgaben
 * Farbliche hervorhebung von Über-/Fälligen Aufgaben
 * Abschließen von Aufgaben
-
-Auch nach Abschluss der Ausbildung werde, ich dieses Projektes durch neu gewonnene Kentisse weiternetwicklen.
