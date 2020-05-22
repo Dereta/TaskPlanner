@@ -2,13 +2,17 @@ package de.codersgen.task_planner;
 
 import java.awt.EventQueue;
 
+import guis.CreateTask;
+import guis.EditTask;
+import guis.Main;
+
 public class TaskPlanner
 {
     // Erstellen der Objekte der beiden
     // Fenster über das Schlüsselwort "new"
-    private static MainGUI   mainGUI   = new MainGUI();
-    private static CreateGUI createGUI = new CreateGUI();
-    private static EditGUI   editGUI   = new EditGUI();
+    private static Main   mainGUI   = new Main();
+    private static CreateTask createGUI = new CreateTask();
+    private static EditTask   editGUI   = new EditTask();
     private static DBManager dbManager = new DBManager();
 
     public static void main(String[] args)
@@ -26,17 +30,17 @@ public class TaskPlanner
         });
     }
 
-    public static MainGUI getMainGUI()
+    public static Main getMainGUI()
     {
         return mainGUI;
     }
 
-    public static CreateGUI getCreateGUI()
+    public static CreateTask getCreateGUI()
     {
         return createGUI;
     }
 
-    public static EditGUI getEditGUI()
+    public static EditTask getEditGUI()
     {
         return editGUI;
     }

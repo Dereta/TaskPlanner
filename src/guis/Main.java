@@ -1,4 +1,4 @@
-package de.codersgen.task_planner;
+package guis;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,9 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+
+import de.codersgen.task_planner.TaskPlanner;
+import de.codersgen.task_planner.TaskTemplate;
+import de.codersgen.task_planner.Utils;
+
 import javax.swing.JCheckBox;
 
-public class MainGUI extends JFrame
+public class Main extends JFrame
 {
     private static final long serialVersionUID = 1L;
 
@@ -48,7 +53,7 @@ public class MainGUI extends JFrame
     private JScrollPane   taskContainer = new JScrollPane();
     private static JPanel taskView      = new JPanel();
 
-    public MainGUI()
+    public Main()
     {
         // Windows Size
         Rectangle windowsSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();

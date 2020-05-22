@@ -1,4 +1,4 @@
-package de.codersgen.task_planner;
+package guis;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -16,9 +16,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+
+import de.codersgen.task_planner.TaskPlanner;
+import de.codersgen.task_planner.Utils;
+
 import javax.swing.JScrollPane;
 
-public class EditGUI extends JFrame
+public class CreateTask extends JFrame
 {
     private static final long serialVersionUID = 1L;
 
@@ -27,32 +31,43 @@ public class EditGUI extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            // Button Speichern gedrückt
-            // Aufgabe überarbeitet Speichern
-            if (e.getSource().equals(btnSave))
+            // Button Eintragen gedrückt
+            // Aufgabe in die Datenbank eintragen
+            if (e.getSource().equals(btnEnter))
             {
                 // Title enthält keinen text
-                if (tfTitle.getText().equalsIgnoreCase("Title") && tfTitle.getForeground() == Color.LIGHT_GRAY
-                        || tfDueDate.getText().equalsIgnoreCase("dd.mm.yyyy")
-                                && tfDueDate.getForeground() == Color.LIGHT_GRAY
-                        || taContent.getText().equalsIgnoreCase("Content")
-                                && taContent.getForeground() == Color.LIGHT_GRAY)
+                if (tfTitle.getText().equalsIgnoreCase("Title") && tfTitle.getForeground() == Color.LIGHT_GRAY)
                 {
-                    JOptionPane.showMessageDialog(null, "Please fill out all fields.", "Error",
+                    JOptionPane.showMessageDialog(null, "Please fill out the title.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Inhalte Limitieren
+                // DueDate enthält keinen Text
+                if (tfDueDate.getText().equalsIgnoreCase("Title") && tfDueDate.getForeground() == Color.LIGHT_GRAY)
+                {
+                    JOptionPane.showMessageDialog(null, "Please fill out the due date.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Content enthält keinen Text
+                if (taContent.getText().equalsIgnoreCase("Content") && taContent.getForeground() == Color.LIGHT_GRAY)
+                {
+                    JOptionPane.showMessageDialog(null, "Please fill out the content.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Inhalt Limitieren
                 if (tfTitle.getText().length() >= Utils.TITLE_MAX_LENGTH)
                     tfTitle.setText(tfTitle.getText().substring(0, Utils.TITLE_MAX_LENGTH));
-
                 if (tfDueDate.getText().length() >= Utils.DUE_DATE_MAX_LENGTH)
                     tfDueDate.setText(tfDueDate.getText().substring(0, Utils.DUE_DATE_MAX_LENGTH));
-
                 if (taContent.getText().length() >= Utils.CONTENT_MAX_LENGTH)
                     taContent.setText(taContent.getText().substring(0, Utils.CONTENT_MAX_LENGTH));
 
+                // DueDate überprüfen
                 String correctDate = Utils.getValidDate(tfDueDate.getText());
                 if (correctDate == null)
                 {
@@ -63,33 +78,28 @@ public class EditGUI extends JFrame
                     return;
                 }
 
-                if (String.valueOf(cbState.getSelectedItem()).equalsIgnoreCase("done"))
-                {
-                    String options[] =
-                    { "Save", "Abort" };
-                    int selection = JOptionPane.showOptionDialog(null,
-                            "Do you want to set status to 'done'?\nThe Task will no longer be visible!", "Update Task",
-                            0, JOptionPane.WARNING_MESSAGE, null, options, null);
-                    if (selection == 1)
-                    {
-                        System.out.println("Abort");
-                        return;
-                    }
-                    System.out.println("Save");
-                }
-
-                // Update den Task in der Datenbank
-                TaskPlanner.getDBManager().updateTask(task.getID(), tfTitle.getText(), correctDate,
+                TaskPlanner.getDBManager().insertTask(tfTitle.getText(), correctDate,
                         String.valueOf(cbState.getSelectedItem()), taContent.getText());
-
-                // Setze GUI zurück
-                resetGUI();
+                tfTitle.setForeground(Color.LIGHT_GRAY);
+                tfTitle.setText("Title");
+                tfDueDate.setForeground(Color.LIGHT_GRAY);
+                tfDueDate.setText("dd.mm.yyyy");
+                taContent.setForeground(Color.LIGHT_GRAY);
+                taContent.setText("Content");
+                setVisible(false);
+                System.out.println("Button Enter");
             }
             // Button Abbrechen gedrückt
+            // Inhalt der Eingabefelder zurücksetzen
             else if (e.getSource().equals(btnAbort))
             {
-                // Setze GUI zurück
-                resetGUI();
+                tfTitle.setForeground(Color.LIGHT_GRAY);
+                tfTitle.setText("Title");
+                tfDueDate.setForeground(Color.LIGHT_GRAY);
+                tfDueDate.setText("dd.mm.yyyy");
+                taContent.setForeground(Color.LIGHT_GRAY);
+                taContent.setText("Content");
+                setVisible(false);
                 System.out.println("Button Abort");
             }
         }
@@ -169,8 +179,6 @@ public class EditGUI extends JFrame
     private JPanel contentPane;
 
     // Deklarierung der nötigen Elemente
-    private TaskTemplate task = null;
-
     // 4 Beschriftungen
     private JLabel lblTitle   = new JLabel("Title");
     private JLabel lblDueDate = new JLabel("Due date");
@@ -185,17 +193,17 @@ public class EditGUI extends JFrame
 
     // 1 Combobox
     private String[]          states  = new String[]
-    { "Todo", "In Work", "Done" };
+    { "Todo", "In Work" };
     private JComboBox<String> cbState = new JComboBox<String>(states);
 
     // 2 Buttons
-    private JButton btnSave  = new JButton("Save");
+    private JButton btnEnter = new JButton("Enter");
     private JButton btnAbort = new JButton("Abort");
 
-    public EditGUI()
+    public CreateTask()
     {
         // Eigenschaften des Fensters festlegen
-        setTitle("Edit Task");
+        setTitle("Create Task");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 253, 324);
         setResizable(false);
@@ -214,6 +222,7 @@ public class EditGUI extends JFrame
         tfTitle.setLocation(10, 36);
         tfTitle.setSize(227, 20);
         tfTitle.addFocusListener(fieldListener);
+        tfTitle.requestFocus();
 
         // Fälligkeitsdatum
         lblDueDate.setLocation(10, 67);
@@ -242,9 +251,9 @@ public class EditGUI extends JFrame
         spContent.setBounds(10, 148, 227, 100);
 
         // Eintragen
-        btnSave.setLocation(10, 259);
-        btnSave.setSize(105, 30);
-        btnSave.addActionListener(buttonListener);
+        btnEnter.setLocation(10, 259);
+        btnEnter.setSize(105, 30);
+        btnEnter.addActionListener(buttonListener);
 
         // Abbrechen
         btnAbort.setLocation(132, 259);
@@ -260,39 +269,7 @@ public class EditGUI extends JFrame
         contentPane.add(cbState);
         contentPane.add(lblContent);
         contentPane.add(spContent);
-        contentPane.add(btnSave);
+        contentPane.add(btnEnter);
         contentPane.add(btnAbort);
-    }
-
-    // Deklarierung aller zusätzlich benötigten Methoden
-
-    // Task setzen, den man bearbeiten möchte
-    public void setTask(TaskTemplate taskTemplate)
-    {
-        this.task = taskTemplate;
-
-        tfTitle.setForeground(Color.BLACK);
-        tfTitle.setText(taskTemplate.getTitle());
-
-        tfDueDate.setForeground(Color.BLACK);
-        tfDueDate.setText(taskTemplate.getDueDate());
-
-        cbState.setSelectedItem(taskTemplate.getStatus());
-
-        taContent.setForeground(Color.BLACK);
-        taContent.setText(taskTemplate.getContent());
-
-        System.out.println("Set Task");
-    }
-
-    private void resetGUI()
-    {
-        tfTitle.setForeground(Color.LIGHT_GRAY);
-        tfTitle.setText("Title");
-        tfDueDate.setForeground(Color.LIGHT_GRAY);
-        tfDueDate.setText("dd.mm.yyyy");
-        taContent.setForeground(Color.LIGHT_GRAY);
-        taContent.setText("Content");
-        setVisible(false);
     }
 }
