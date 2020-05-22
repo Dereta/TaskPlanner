@@ -30,12 +30,12 @@ Task Planner
 
 Create Task
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/create_task.jpg#0)
+![CreateTask Example](http://media.codersgen.de/img/lts/github/TaskPlanner/create_task.jpg#0)
 
 Update Task
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/update_task.jpg#0)
+![UpdateTask Example](http://media.codersgen.de/img/lts/github/TaskPlanner/update_task.jpg#0)
 
 Edit Task
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/edit_task.jpg#0)
+![EditTask Example](http://media.codersgen.de/img/lts/github/TaskPlanner/edit_task.jpg#0)
