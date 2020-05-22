@@ -28,6 +28,11 @@ Task Planner
 
 ![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/task_planner.jpg)
 
-Create Task | Update Task | Edit Task
+Create Task
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/create_task.jpg)
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/create_task.jpg) ![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/update_task.jpg) ![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/edit_task.jpg)
+Update Task
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/update_task.jpg)
+
+Edit Task
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/edit_task.jpg)
