@@ -22,3 +22,6 @@ Es wurde während meines Praktikums bei der Sogeti High Tech in München entwick
 * Bearbeiten der Aufgaben
 * Farbliche hervorhebung von Über-/Fälligen Aufgaben
 * Abschließen von Aufgaben
+
+### Example
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/ImageScreensaver/example.jpg)
