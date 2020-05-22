@@ -26,16 +26,16 @@ Es wurde während meines Praktikums bei der Sogeti High Tech in München entwick
 ### Example
 Task Planner
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/task_planner.jpg)
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/task_planner.jpg#0)
 
 Create Task
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/create_task.jpg)
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/create_task.jpg#0)
 
 Update Task
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/update_task.jpg)
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/update_task.jpg#0)
 
 Edit Task
 
-![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/edit_task.jpg)
+![TaskPlanner Example](http://media.codersgen.de/img/lts/github/TaskPlanner/edit_task.jpg#0)
