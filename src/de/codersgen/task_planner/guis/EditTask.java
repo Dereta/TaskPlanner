@@ -16,12 +16,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
 
 import de.codersgen.task_planner.TaskPlanner;
 import de.codersgen.task_planner.TaskTemplate;
-import de.codersgen.task_planner.Utils;
-
-import javax.swing.JScrollPane;
+import de.codersgen.task_planner.utils.Utils;
 
 public class EditTask extends JFrame
 {
@@ -32,43 +31,39 @@ public class EditTask extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            // Button Speichern gedrückt
-            // Aufgabe überarbeitet Speichern
-            if (e.getSource().equals(btnSave))
+            if (e.getSource().equals(buttonSave))
             {
-                // Title enthält keinen text
-                if (tfTitle.getText().equalsIgnoreCase("Title") && tfTitle.getForeground() == Color.LIGHT_GRAY
-                        || tfDueDate.getText().equalsIgnoreCase("dd.mm.yyyy")
-                                && tfDueDate.getForeground() == Color.LIGHT_GRAY
-                        || taContent.getText().equalsIgnoreCase("Content")
-                                && taContent.getForeground() == Color.LIGHT_GRAY)
+                if (textTitle.getText().equalsIgnoreCase("Title") && textTitle.getForeground() == Color.LIGHT_GRAY
+                        || textDueDate.getText().equalsIgnoreCase("dd.mm.yyyy")
+                                && textDueDate.getForeground() == Color.LIGHT_GRAY
+                        || textContent.getText().equalsIgnoreCase("Content")
+                                && textContent.getForeground() == Color.LIGHT_GRAY)
                 {
                     JOptionPane.showMessageDialog(null, "Please fill out all fields.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Inhalte Limitieren
-                if (tfTitle.getText().length() >= Utils.TITLE_MAX_LENGTH)
-                    tfTitle.setText(tfTitle.getText().substring(0, Utils.TITLE_MAX_LENGTH));
+                if (textTitle.getText().length() >= Utils.TITLE_MAX_LENGTH)
+                    textTitle.setText(textTitle.getText().substring(0, Utils.TITLE_MAX_LENGTH));
 
-                if (tfDueDate.getText().length() >= Utils.DUE_DATE_MAX_LENGTH)
-                    tfDueDate.setText(tfDueDate.getText().substring(0, Utils.DUE_DATE_MAX_LENGTH));
+                if (textDueDate.getText().length() >= Utils.DUE_DATE_MAX_LENGTH)
+                    textDueDate.setText(textDueDate.getText().substring(0, Utils.DUE_DATE_MAX_LENGTH));
 
-                if (taContent.getText().length() >= Utils.CONTENT_MAX_LENGTH)
-                    taContent.setText(taContent.getText().substring(0, Utils.CONTENT_MAX_LENGTH));
+                if (textContent.getText().length() >= Utils.CONTENT_MAX_LENGTH)
+                    textContent.setText(textContent.getText().substring(0, Utils.CONTENT_MAX_LENGTH));
 
-                String correctDate = Utils.getValidDate(tfDueDate.getText());
+                String correctDate = Utils.getValidDate(textDueDate.getText());
                 if (correctDate == null)
                 {
                     JOptionPane.showMessageDialog(null,
                             "Erroneous date format.\nPlease check the date.\ne.g. dd.mm.yyyy > 19.02.2019", "Error",
                             JOptionPane.ERROR_MESSAGE);
-                    tfDueDate.requestFocus();
+                    textDueDate.requestFocus();
                     return;
                 }
 
-                if (String.valueOf(cbState.getSelectedItem()).equalsIgnoreCase("done"))
+                if (String.valueOf(comboBoxState.getSelectedItem()).equalsIgnoreCase("done"))
                 {
                     String options[] =
                     { "Save", "Abort" };
@@ -77,25 +72,18 @@ public class EditTask extends JFrame
                             0, JOptionPane.WARNING_MESSAGE, null, options, null);
                     if (selection == 1)
                     {
-                        System.out.println("Abort");
                         return;
                     }
-                    System.out.println("Save");
                 }
 
-                // Update den Task in der Datenbank
-                TaskPlanner.getDBManager().updateTask(task.getID(), tfTitle.getText(), correctDate,
-                        String.valueOf(cbState.getSelectedItem()), taContent.getText());
+                TaskPlanner.getDatabaseManager().updateTask(task.getID(), textTitle.getText(), correctDate,
+                        String.valueOf(comboBoxState.getSelectedItem()), textContent.getText());
 
-                // Setze GUI zurück
                 resetGUI();
             }
-            // Button Abbrechen gedrückt
-            else if (e.getSource().equals(btnAbort))
+            else if (e.getSource().equals(buttonAbort))
             {
-                // Setze GUI zurück
                 resetGUI();
-                System.out.println("Button Abort");
             }
         }
     };
@@ -105,9 +93,7 @@ public class EditTask extends JFrame
         @Override
         public void focusLost(FocusEvent e)
         {
-            // Eingabefelder wenn der Fokus verloren
-            // geht mit einem Hint füllen
-            if (e.getSource().equals(tfTitle))
+            if (e.getSource().equals(textTitle))
             {
                 JTextField textField = (JTextField) e.getSource();
                 if (textField.getText().isEmpty())
@@ -116,7 +102,7 @@ public class EditTask extends JFrame
                     textField.setText("Title");
                 }
             }
-            else if (e.getSource().equals(tfDueDate))
+            else if (e.getSource().equals(textDueDate))
             {
                 JTextField textField = (JTextField) e.getSource();
                 if (textField.getText().isEmpty())
@@ -125,7 +111,7 @@ public class EditTask extends JFrame
                     textField.setText("dd.mm.yyyy");
                 }
             }
-            else if (e.getSource().equals(taContent))
+            else if (e.getSource().equals(textContent))
             {
                 JTextArea textArea = (JTextArea) e.getSource();
                 if (textArea.getText().isEmpty())
@@ -139,9 +125,7 @@ public class EditTask extends JFrame
         @Override
         public void focusGained(FocusEvent e)
         {
-            // Eingabefelder hint löschen
-            // wenn sie Fokus bekommen
-            if (e.getSource().equals(tfTitle))
+            if (e.getSource().equals(textTitle))
             {
                 JTextField textField = (JTextField) e.getSource();
                 if (textField.getText().equalsIgnoreCase("Title") && textField.getForeground() == Color.LIGHT_GRAY)
@@ -150,7 +134,7 @@ public class EditTask extends JFrame
                     textField.setText("");
                 }
             }
-            else if (e.getSource().equals(tfDueDate))
+            else if (e.getSource().equals(textDueDate))
             {
                 JTextField textField = (JTextField) e.getSource();
                 if (textField.getText().equalsIgnoreCase("dd.mm.yyyy") && textField.getForeground() == Color.LIGHT_GRAY)
@@ -159,7 +143,7 @@ public class EditTask extends JFrame
                     textField.setText("");
                 }
             }
-            else if (e.getSource().equals(taContent))
+            else if (e.getSource().equals(textContent))
             {
                 JTextArea textArea = (JTextArea) e.getSource();
                 if (textArea.getText().equalsIgnoreCase("Content") && textArea.getForeground() == Color.LIGHT_GRAY)
@@ -171,133 +155,114 @@ public class EditTask extends JFrame
         }
     };
 
-    private JPanel contentPane;
-
-    // Deklarierung der nötigen Elemente
+    private JPanel panel;
+    
     private TaskTemplate task = null;
 
-    // 4 Beschriftungen
-    private JLabel lblTitle   = new JLabel("Title");
-    private JLabel lblDueDate = new JLabel("Due date");
-    private JLabel lblState   = new JLabel("State");
-    private JLabel lblContent = new JLabel("Content");
+    private JLabel labelTitle   = new JLabel("Title");
+    private JLabel labelDueDate = new JLabel("Due date");
+    private JLabel labelState   = new JLabel("State");
+    private JLabel labelContent = new JLabel("Content");
 
-    // 3 Eingabe Felder
-    private JTextField  tfTitle   = new JTextField("Title");
-    private JTextField  tfDueDate = new JTextField("dd.mm.yyyy");
-    private JScrollPane spContent = new JScrollPane();
-    private JTextArea   taContent = new JTextArea("Content");
+    private JTextField  textTitle   = new JTextField("Title");
+    private JTextField  textDueDate = new JTextField("dd.mm.yyyy");
+    private JScrollPane scrollPaneContent = new JScrollPane();
+    private JTextArea   textContent = new JTextArea("Content");
 
-    // 1 Combobox
-    private String[]          states  = new String[]
-    { "Todo", "In Work", "Done" };
-    private JComboBox<String> cbState = new JComboBox<String>(states);
+    private String[]          aStates  = new String[] { "Todo", "In Work", "Done" };
+    private JComboBox<String> comboBoxState = new JComboBox<String>(aStates);
 
     // 2 Buttons
-    private JButton btnSave  = new JButton("Save");
-    private JButton btnAbort = new JButton("Abort");
+    private JButton buttonSave  = new JButton("Save");
+    private JButton buttonAbort = new JButton("Abort");
 
     public EditTask()
     {
-        // Eigenschaften des Fensters festlegen
         setTitle("Edit Task");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 253, 324);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        contentPane.setLayout(null);
-        setContentPane(contentPane);
+        panel = new JPanel();
+        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        panel.setLayout(null);
+        setContentPane(panel);
 
-        // Bearbeiten der Eigenschaften der Elemente
-        // Titel
-        lblTitle.setLocation(10, 11);
-        lblTitle.setSize(227, 14);
-        tfTitle.setForeground(Color.LIGHT_GRAY);
-        tfTitle.setLocation(10, 36);
-        tfTitle.setSize(227, 20);
-        tfTitle.addFocusListener(fieldListener);
+        labelTitle.setLocation(10, 11);
+        labelTitle.setSize(227, 14);
+        textTitle.setForeground(Color.LIGHT_GRAY);
+        textTitle.setLocation(10, 36);
+        textTitle.setSize(227, 20);
+        textTitle.addFocusListener(fieldListener);
 
-        // Fälligkeitsdatum
-        lblDueDate.setLocation(10, 67);
-        lblDueDate.setSize(105, 14);
-        tfDueDate.setForeground(Color.LIGHT_GRAY);
-        tfDueDate.setLocation(10, 92);
-        tfDueDate.setSize(105, 20);
-        tfDueDate.addFocusListener(fieldListener);
+        labelDueDate.setLocation(10, 67);
+        labelDueDate.setSize(105, 14);
+        textDueDate.setForeground(Color.LIGHT_GRAY);
+        textDueDate.setLocation(10, 92);
+        textDueDate.setSize(105, 20);
+        textDueDate.addFocusListener(fieldListener);
 
-        // Status
-        lblState.setLocation(132, 67);
-        lblState.setSize(105, 14);
-        cbState.setLocation(132, 92);
-        cbState.setSize(105, 20);
+        labelState.setLocation(132, 67);
+        labelState.setSize(105, 14);
+        comboBoxState.setLocation(132, 92);
+        comboBoxState.setSize(105, 20);
 
-        // Inhalt
-        lblContent.setLocation(10, 123);
-        lblContent.setSize(227, 14);
-        taContent.setForeground(Color.LIGHT_GRAY);
-        taContent.setLineWrap(true);
-        taContent.setWrapStyleWord(true);
-        taContent.addFocusListener(fieldListener);
+        labelContent.setLocation(10, 123);
+        labelContent.setSize(227, 14);
+        textContent.setForeground(Color.LIGHT_GRAY);
+        textContent.setLineWrap(true);
+        textContent.setWrapStyleWord(true);
+        textContent.addFocusListener(fieldListener);
 
-        spContent = new JScrollPane(taContent);
-        spContent.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        spContent.setBounds(10, 148, 227, 100);
+        scrollPaneContent = new JScrollPane(textContent);
+        scrollPaneContent.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneContent.setBounds(10, 148, 227, 100);
 
-        // Eintragen
-        btnSave.setLocation(10, 259);
-        btnSave.setSize(105, 30);
-        btnSave.addActionListener(buttonListener);
+        buttonSave.setLocation(10, 259);
+        buttonSave.setSize(105, 30);
+        buttonSave.addActionListener(buttonListener);
 
-        // Abbrechen
-        btnAbort.setLocation(132, 259);
-        btnAbort.setSize(105, 30);
-        btnAbort.addActionListener(buttonListener);
+        buttonAbort.setLocation(132, 259);
+        buttonAbort.setSize(105, 30);
+        buttonAbort.addActionListener(buttonListener);
 
-        // Hinzufügen der Elemente in den Hauptcontainer
-        contentPane.add(lblTitle);
-        contentPane.add(tfTitle);
-        contentPane.add(lblDueDate);
-        contentPane.add(tfDueDate);
-        contentPane.add(lblState);
-        contentPane.add(cbState);
-        contentPane.add(lblContent);
-        contentPane.add(spContent);
-        contentPane.add(btnSave);
-        contentPane.add(btnAbort);
+        panel.add(labelTitle);
+        panel.add(textTitle);
+        panel.add(labelDueDate);
+        panel.add(textDueDate);
+        panel.add(labelState);
+        panel.add(comboBoxState);
+        panel.add(labelContent);
+        panel.add(scrollPaneContent);
+        panel.add(buttonSave);
+        panel.add(buttonAbort);
     }
 
-    // Deklarierung aller zusätzlich benötigten Methoden
-
-    // Task setzen, den man bearbeiten möchte
     public void setTask(TaskTemplate taskTemplate)
     {
         this.task = taskTemplate;
 
-        tfTitle.setForeground(Color.BLACK);
-        tfTitle.setText(taskTemplate.getTitle());
+        textTitle.setForeground(Color.BLACK);
+        textTitle.setText(taskTemplate.getTitle());
 
-        tfDueDate.setForeground(Color.BLACK);
-        tfDueDate.setText(taskTemplate.getDueDate());
+        textDueDate.setForeground(Color.BLACK);
+        textDueDate.setText(taskTemplate.getDueDate());
 
-        cbState.setSelectedItem(taskTemplate.getStatus());
+        comboBoxState.setSelectedItem(taskTemplate.getStatus());
 
-        taContent.setForeground(Color.BLACK);
-        taContent.setText(taskTemplate.getContent());
-
-        System.out.println("Set Task");
+        textContent.setForeground(Color.BLACK);
+        textContent.setText(taskTemplate.getContent());
     }
 
     private void resetGUI()
     {
-        tfTitle.setForeground(Color.LIGHT_GRAY);
-        tfTitle.setText("Title");
-        tfDueDate.setForeground(Color.LIGHT_GRAY);
-        tfDueDate.setText("dd.mm.yyyy");
-        taContent.setForeground(Color.LIGHT_GRAY);
-        taContent.setText("Content");
+        textTitle.setForeground(Color.LIGHT_GRAY);
+        textTitle.setText("Title");
+        textDueDate.setForeground(Color.LIGHT_GRAY);
+        textDueDate.setText("dd.mm.yyyy");
+        textContent.setForeground(Color.LIGHT_GRAY);
+        textContent.setText("Content");
         setVisible(false);
     }
 }

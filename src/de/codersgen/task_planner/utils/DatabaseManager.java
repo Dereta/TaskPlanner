@@ -1,9 +1,6 @@
-package de.codersgen.task_planner;
+package de.codersgen.task_planner.utils;
 
 import java.sql.Statement;
-
-import javax.swing.JOptionPane;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,91 +8,106 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DBManager
+import de.codersgen.task_planner.TaskPlanner;
+
+public class DatabaseManager
 {
-    // Treiber Name, Speicherort und Datenbankname festlegen
+    // Default Values
     String driver   = "jdbc:sqlite:";
     String location = "./res/";
     String database = "taskPlanner.db";
 
-    // Connection die während der Laufzeit des Programms offen gehalten wird
+    // SQL Statements#
+    String stmCreateDatabase = "CREATE TABLE IF NOT EXISTS tasks (id integer PRIMARY KEY, "
+    		+ "title text NOT NULL, dueDate text NOT NULL, status text NOT NULL, content text NOT NULL);";
+    String stmInsertTask = "INSERT INTO tasks (title, dueDate, status, content) VALUES (?, ?, ?, ?)";
+    String stmUpdateTask = "UPDATE tasks SET title = ?, dueDate = ?, status = ?, content = ? WHERE id = ?";
+    String stmFinishTask = "UPDATE tasks SET status = 'done' WHERE id = ?";
+    String stmGetTasks = "SELECT * FROM tasks WHERE status NOT LIKE '%done%' ORDER BY DATE(dueDate) ASC, title ASC";
+    String stmGetAllTasks = "SELECT * FROM tasks ORDER BY DATE(dueDate) ASC, title ASC";
+    
+    // Database connection
     Connection connection = null;
 
-    // Konstruktor indem die Verbindung zur Datenbank aufgebaut wird
-    // Sollte dies nicht möglich sein, wird eine Fehlermeldung ausgegeben
-    // und das Programm wird beendet
-    public DBManager()
+    // Connect to database
+    public DatabaseManager()
     {
         try
         {
-            // Ordner res erstellen und Verbindung zur Datenbank aufbauen
-            new File("res").mkdir();
+            File directory = new File(location);
+            if (!directory.exists())
+            {
+            	directory.mkdir();
+            }
             connection = DriverManager.getConnection(driver + location + database);
-            System.out.println("Connection to Database successfully");
         }
         catch (SQLException ex)
         {
-            // Verbindung Fehlgeschlagen
-            System.out.println("Connection to Database failed");
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Could not connect to the database.", "Error", JOptionPane.OK_OPTION);
+            Utils.showError(ex, "error while open connection");
             System.exit(0);
         }
 
-        // Methode aufrufen
         createDatabase();
     }
 
-    // Schließe alles, sobald die Datenbank nicht mehr benötigt wird
+    // Close database
     public void closeDatebase()
     {
         try
         {
-            // Schließen der Datenbank erfolgreich
-            connection.close();
+        	if (connection.isValid(1))
+        	{
+        		connection.close();
+        	}
         }
         catch (SQLException ex)
         {
-            // Schließen der Datenbank fehlgeschlagen
-            System.out.println("Error while closen connection");
-            ex.printStackTrace();
+            Utils.showError(ex, "error while close connection");
         }
     }
 
-    // Erstellen der Tabelle "tasks", insofern diese nicht vorhanden ist
+    private boolean isConnectionValid() 
+    {
+    	 try 
+    	 {
+    		 return connection.isValid(1);
+    	 } catch (SQLException ex) {
+			 Utils.showError(ex, "error while checking connection");
+			 return false;
+    	 }
+    }
+    
+    // Create task table
     public void createDatabase()
     {
-        // Aufbau der Tabelle
-        String statementQuery = "CREATE TABLE IF NOT EXISTS tasks (id integer PRIMARY KEY,\n"
-                + "	title text NOT NULL, dueDate text NOT NULL, status text NOT NULL, content text NOT NULL);";
+    	if (!isConnectionValid()) {
+    		Utils.showError("createDatabase : connection is not valid");
+    		return;
+    	}
+    	
         try
         {
-            // Erstellen der Tabelle erfolgreich
             Statement statement = connection.createStatement();
-            statement.execute(statementQuery);
-            System.out.println("Table created successfully");
+            statement.execute(stmCreateDatabase);
         }
         catch (SQLException ex)
         {
-            // Erstellen der Tabelle fehlgeschlagen
-            System.out.println("The table could not be create");
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "The table could not be created.", "Error", JOptionPane.OK_OPTION);
+            Utils.showError(ex, "error while create task table");
             System.exit(0);
         }
-    }
-
-    // Einfügen eines Eintrages in die Datenbank
+    }    
+    
+    // Add task
     public void insertTask(String title, String dueDate, String status, String content)
     {
-        // Aufbau der Eintragung
-        String statementQuery = "INSERT INTO tasks\n" + " (title, dueDate, status, content)" + " VALUES"
-                + " (?, ?, ?, ?)";
+    	if (!isConnectionValid()) {
+    		Utils.showError("insertTask : connection is not valid");
+    		return;
+    	}
+    	
         try
         {
-            // Eintragen der Daten erfolgreich
-            System.out.println("insert data successfully");
-            PreparedStatement statement = connection.prepareStatement(statementQuery);
+            PreparedStatement statement = connection.prepareStatement(stmInsertTask);
             statement.setString(1, title);
             statement.setString(2, dueDate);
             statement.setString(3, status);
@@ -104,25 +116,22 @@ public class DBManager
         }
         catch (SQLException ex)
         {
-            // Eintragen der Daten fehlgeschlagen
-            System.out.println("Cannot insert data into table");
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Cannot insert data into table", "Error", JOptionPane.OK_OPTION);
+            Utils.showError(ex, "error while insert tasks");
         }
         getTasks();
     }
 
-    // Updaten vorhandener Einträge der Datenbank
+    // Update task
     public void updateTask(int id, String title, String dueDate, String status, String content)
     {
-        // Aufbau des Updates
-        String statementQuery = "UPDATE tasks SET\n" + "title = ?, dueDate = ?, status = ?, content = ?"
-                + " WHERE id = ?";
+    	if (!isConnectionValid()) {
+    		Utils.showError("updateTask : connection is not valid");
+    		return;
+    	}
+    	
         try
         {
-            // Updaten der Daten erfolgreich
-            System.out.println("update data successfully");
-            PreparedStatement statement = connection.prepareStatement(statementQuery);
+            PreparedStatement statement = connection.prepareStatement(stmUpdateTask);
             statement.setString(1, title);
             statement.setString(2, dueDate);
             statement.setString(3, status);
@@ -132,72 +141,55 @@ public class DBManager
         }
         catch (SQLException ex)
         {
-            // Updaten der Daten fehlgeschlagen
-            System.out.println("cannot update data");
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "cannot update data", "Error", JOptionPane.OK_OPTION);
+            Utils.showError(ex, "error while updating tasks");
         }
         getTasks();
     }
 
-    // Löschen eines Eintrages aus der Datenbank
+    // Finish task
     public void finishTask(int id)
     {
-        // Aufbau der Fertigstellung
-        String statementQuery = "UPDATE tasks SET status = 'done' WHERE id = ?";
-
+    	if (!isConnectionValid()) {
+    		Utils.showError("finishTask : connection is not valid");
+    		return;
+    	}
+    	
         try
         {
-            // Fertigstellung der Daten erfolgreich
-            System.out.println("finish entry successfully");
-            PreparedStatement statement = connection.prepareStatement(statementQuery);
+            PreparedStatement statement = connection.prepareStatement(stmFinishTask);
             statement.setInt(1, id);
             statement.executeUpdate();
         }
         catch (SQLException ex)
         {
-            // Fertigstellung der Daten fehlgeschlagen
-            System.out.println("cannot finish data");
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "cannot finish data", "Error", JOptionPane.OK_OPTION);
+            Utils.showError(ex, "error while finish task");
         }
         getTasks();
     }
 
-    // Auslesen aller Datensätze
+    // Get all tasks
     public void getTasks()
     {
-        // Aufbau des Auslesens
-        // Sortierung anhand des Datums und des Titles (Alphanumerisch)
-        String statementQuery = "SELECT * FROM tasks WHERE status NOT LIKE '%done%' ORDER BY DATE(dueDate) ASC, title ASC";
-        if (Utils.SHOW_DONE)
-            // Ausgabe von allen Texten, auch den fertiggestellten
-            statementQuery = "SELECT * FROM tasks ORDER BY DATE(dueDate) ASC, title ASC";
-
+    	if (!isConnectionValid()) {
+    		Utils.showError("getTasks : connection is not valid");
+    		return;
+    	}
+    	
         try
         {
-            // Auslesen der Daten erfolgreich
-            System.out.println("select entrys successfully");
             Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(statementQuery);
+            ResultSet result = statement.executeQuery((Utils.SHOW_DONE ? stmGetAllTasks : stmGetTasks));
             TaskPlanner.getMainGUI().removeTasks();
-            System.out.println("remove task");
             while (result.next())
             {
-                // Ausgelesene Einträge in das Hauptfenster einfügen
                 TaskPlanner.getMainGUI().addTask(result.getInt("id"), result.getString("title"),
                         result.getString("dueDate"), result.getString("status"), result.getString("content"));
-                System.out.println("add task");
             }
             TaskPlanner.getMainGUI().reorderTasks();
-            System.out.println("reorder task");
         }
         catch (SQLException ex)
         {
-            // Auslesen der Daten fehlgeschlagen
-            System.out.println("cannot get data");
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "cannot get data", "Error", JOptionPane.OK_OPTION);
+        	Utils.showError(ex, "error while getting tasks");
         }
     }
 }

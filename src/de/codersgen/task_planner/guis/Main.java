@@ -14,12 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JCheckBox;
 
 import de.codersgen.task_planner.TaskPlanner;
 import de.codersgen.task_planner.TaskTemplate;
-import de.codersgen.task_planner.Utils;
-
-import javax.swing.JCheckBox;
+import de.codersgen.task_planner.utils.Utils;
 
 public class Main extends JFrame
 {
@@ -30,90 +29,80 @@ public class Main extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            // Aktion wenn "NewTask" Button gedrückt wird
-            if (e.getSource().equals(btnNewTask))
+        	
+        	Object object = e.getSource();
+            if (object.equals(buttonNewTask))
             {
                 TaskPlanner.getCreateGUI().setVisible(true);
                 return;
             }
-            // Aktion "Show Finished tasks" CheckBox gedrückt
-            else if (e.getSource().equals(cbShowDone))
+            else if (object.equals(checkBoxShowFinishedTasks))
             {
-                Utils.SHOW_DONE = cbShowDone.isSelected();
-                TaskPlanner.getDBManager().getTasks();
+                Utils.SHOW_DONE = checkBoxShowFinishedTasks.isSelected();
+                TaskPlanner.getDatabaseManager().getTasks();
                 return;
             }
         }
     };
 
-    private JPanel    contentPane;
-    private JButton   btnNewTask;
-    private JCheckBox cbShowDone;
+    private JPanel    contentPanel;
+    private JButton   buttonNewTask;
+    private JCheckBox checkBoxShowFinishedTasks;
 
     private JScrollPane   taskContainer = new JScrollPane();
     private static JPanel taskView      = new JPanel();
 
+    // Constructor
     public Main()
     {
-        // Windows Size
         Rectangle windowsSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-        // Eigenschaften des Fensters festlegen
         setTitle("TaskPlanner");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds((int) windowsSize.getWidth() - 253, 0, 253, (int) windowsSize.getHeight());
         setResizable(false);
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        contentPane.setLayout(null);
-        setContentPane(contentPane);
+        contentPanel = new JPanel();
+        contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPanel.setLayout(null);
+        setContentPane(contentPanel);
 
-        // Bearbeiten der Eigenschaften der Elemente
-        // Neue Aufgabe
-        btnNewTask = new JButton("New task");
-        btnNewTask.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        btnNewTask.setBounds(10, 11, 229, 30);
-        btnNewTask.addActionListener(actionListener);
+        buttonNewTask = new JButton("New task");
+        buttonNewTask.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        buttonNewTask.setBounds(10, 11, 229, 30);
+        buttonNewTask.addActionListener(actionListener);
 
-        // Erledigte Aufgaben einblenden
-        cbShowDone = new JCheckBox("Show finished tasks");
-        cbShowDone.setBounds(6, 48, 235, 23);
-        cbShowDone.addActionListener(actionListener);
+        checkBoxShowFinishedTasks = new JCheckBox("Show finished tasks");
+        checkBoxShowFinishedTasks.setBounds(6, 48, 235, 23);
+        checkBoxShowFinishedTasks.addActionListener(actionListener);
 
-        // Aufgaben Container
         taskView.setLayout(null);
         taskContainer.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         taskContainer.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         taskContainer.setBounds(10, 78, 227, 921);
         taskContainer.setViewportView(taskView);
 
-        // Hinzufügen der Elemente in den Hauptcontainer
-        contentPane.add(btnNewTask);
-        contentPane.add(cbShowDone);
-        contentPane.add(taskContainer);
+        contentPanel.add(buttonNewTask);
+        contentPanel.add(checkBoxShowFinishedTasks);
+        contentPanel.add(taskContainer);
     }
 
-    // Neue Aufgaben hinzufügen
+    // Add Task
     public void addTask(int id, String title, String dueDate, String status, String content)
     {
-        // Datum und Uhrzeit aufteilen
+    	// Split time and date
         String dueDateSplit[] = dueDate.split(" ");
         if (dueDateSplit.length != 2)
             return;
 
-        // Datum in seine bestandteile, teilen
         String dueDateTemp[] = dueDateSplit[0].split("-");
         if (dueDateTemp.length != 3)
             return;
 
-        // Zeitunterschied berechen um zu überprüfen
-        // welche Einträge überfällig sind
         GregorianCalendar dateToday = new GregorianCalendar();
         GregorianCalendar dateTask = new GregorianCalendar(Integer.parseInt(dueDateTemp[0]),
                 Integer.parseInt(dueDateTemp[1]) - 1, Integer.parseInt(dueDateTemp[2]));
         long dateDifference = (dateTask.getTimeInMillis() - dateToday.getTimeInMillis());
 
-        // Neue Aufgabe erstellen und mit Inhalt füllen
         TaskTemplate taskTemplate = new TaskTemplate();
         taskTemplate.setID(id);
         taskTemplate.setTitle(title);
@@ -121,40 +110,42 @@ public class Main extends JFrame
         taskTemplate.setStatus(status);
         taskTemplate.setContent(content);
 
-        // Farbe Anhand des Zeitunterschiedes festlegen
-        if (dateDifference <= 0)
-            taskTemplate.setDueColor(TaskTemplate.COLOR_OVER_DUE);
-        else if (dateDifference > 0 && dateDifference < (1000 * 60 * 60 * 24))
-            taskTemplate.setDueColor(TaskTemplate.COLOR_SOON_DUE);
+        if (dateDifference <= 0) 
+        {
+        	taskTemplate.setDueColor(Utils.COLOR_OVER_DUE);
+        }
+        else if (dateDifference < Utils.TIME_SOON_DUE) 
+        {
+        	taskTemplate.setDueColor(Utils.COLOR_SOON_DUE);
+        }
         else
-            taskTemplate.setDueColor(TaskTemplate.COLOR_OK_DUE);
-
-        // Aufgabe in das Hauptfenster hinzufügen
+        {
+        	taskTemplate.setDueColor(Utils.COLOR_OK_DUE);
+        }
         taskView.add(taskTemplate);
     }
 
-    // Aufgaben Löschen
+    // Delete all tasks
     public void removeTasks()
     {
-        // Alle vorhandenen Aufgaben aus dem Hauptfenster löschen
         taskView.removeAll();
     }
 
-    // Aufgaben ausrichten
+    // Reorder all tasks
     public void reorderTasks()
     {
-        // Gehe durch jede einzelne Aufgabe die vorhanden ist
         for (int i = 0; i <= taskView.getComponentCount() - 1; i++)
         {
             TaskTemplate taskTemplate = (TaskTemplate) taskView.getComponent(i);
-            // Richte Aufgabe an Position n aus
-            taskTemplate.setBounds(0, (i * taskTemplate.getHeight()) + (i * TaskTemplate.getSpaceBetween()),
-                    taskTemplate.getWidth(), taskTemplate.getHeight());
+            int positionX = 0;
+            int positionY = (i * taskTemplate.getHeight()) + (i * Utils.TASK_PADDING);
+            int width = taskTemplate.getWidth();
+            int height = taskTemplate.getHeight();
+            taskTemplate.setBounds(positionX, positionY, width, height);
         }
-        // Setze das Fenster so, dass die Scrollbar richtig scrollt
-        taskView.setPreferredSize(new Dimension(taskView.getWidth(),
-                taskView.getComponentCount() * (int) TaskTemplate.getTaskDimensionHeight()
-                        + (taskView.getComponentCount() - 1) * TaskTemplate.getSpaceBetween()));
+        int viewWidth = taskView.getWidth();
+        int viewHeight = taskView.getComponentCount() * (int) Utils.TASK_SIZE.height + (taskView.getComponentCount() - 1) * Utils.TASK_PADDING;
+        taskView.setPreferredSize(new Dimension(viewWidth, viewHeight));
         revalidate();
         repaint();
     }

@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import de.codersgen.task_planner.Utils;
+import de.codersgen.task_planner.utils.Utils;
 
 public class MyTests
 {
     @Test
-    public void testDateParsing()
+    public void getValidDate_True_DateIsValid()
     {
+    	// Valid Tests
         // test for dots
         assertNotNull(Utils.getValidDate("10.10.2019"), "10.10.2019");
         assertNotNull(Utils.getValidDate("01.01.2019"), "01.01.2019");
@@ -30,6 +31,12 @@ public class MyTests
         assertNotNull(Utils.getValidDate("29-02-2020"), "29-02-2020");
         assertNotNull(Utils.getValidDate("29-2-2020"), "29-2-2020");
 
+    }
+    
+    @Test
+    public void getValidDate_False_DateIsValid()
+    {
+    	// Invalid Tests
         // test for wrong date dots
         assertNull(Utils.getValidDate("0.10.2019"), "0.10.2019");
         assertNull(Utils.getValidDate("34.01.2019"), "34.01.2019");
@@ -56,22 +63,8 @@ public class MyTests
     }
 
     @Test
-    public void testDateSplitting()
+    public void testDateSplitting_True_SplittingIsValid()
     {
-        // tests for dots
-        assertNotNull(Utils.splitDateString("10.10.2019"), "10.10.2019");
-        assertNotNull(Utils.splitDateString("01.01.2019"), "01.01.2019");
-        assertNotNull(Utils.splitDateString("1.01.2019"), "1.01.2019");
-        assertNotNull(Utils.splitDateString("01.1.2019"), "01.1.2019");
-        assertNotNull(Utils.splitDateString("1.1.2019"), "1.1.2019");
-
-        // tests for dash
-        assertNotNull(Utils.splitDateString("10-10-2019"), "10-10-2019");
-        assertNotNull(Utils.splitDateString("01-01-2019"), "01-01-2019");
-        assertNotNull(Utils.splitDateString("1-01-2019"), "1-01-2019");
-        assertNotNull(Utils.splitDateString("01-1-2019"), "01-1-2019");
-        assertNotNull(Utils.splitDateString("1-1-2019"), "1-1-2019");
-
         // Test for years until 2099
         for (int year = 1970; year <= 2099; year++)
         {
@@ -79,10 +72,17 @@ public class MyTests
             {
                 for (int day = 1; day <= 31; day++)
                 {
+                	// Without leading Zero
                     assertNotNull(Utils.splitDateString(day + "." + month + "." + year),
                             day + "." + month + "." + year);
                     assertNotNull(Utils.splitDateString(day + "-" + month + "-" + year),
-                            day + "." + month + "." + year);
+                            day + "-" + month + "-" + year);
+                    
+                    // With leading Zero
+                    assertNotNull(Utils.splitDateString(String.format("%02d", day) + "." + String.format("%02d", month) + "." + String.format("%02d", year)),
+                    		String.format("%02d", day) + "." + String.format("%02d", month) + "." + String.format("%02d", year));
+                    assertNotNull(Utils.splitDateString(String.format("%02d", day) + "-" + String.format("%02d", month) + "-" + String.format("%02d", year)),
+                    		String.format("%02d", day) + "-" + String.format("%02d", month) + "-" + String.format("%02d", year));
                 }
             }
         }

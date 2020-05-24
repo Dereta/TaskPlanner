@@ -5,27 +5,26 @@ import java.awt.EventQueue;
 import de.codersgen.task_planner.guis.CreateTask;
 import de.codersgen.task_planner.guis.EditTask;
 import de.codersgen.task_planner.guis.Main;
+import de.codersgen.task_planner.utils.DatabaseManager;
 
 public class TaskPlanner
 {
-    // Erstellen der Objekte der beiden
-    // Fenster über das Schlüsselwort "new"
     private static Main   mainGUI   = new Main();
     private static CreateTask createGUI = new CreateTask();
     private static EditTask   editGUI   = new EditTask();
-    private static DBManager dbManager = new DBManager();
+    private static DatabaseManager databaseManager = new DatabaseManager();
 
+    // Programm entry point
     public static void main(String[] args)
     {
         EventQueue.invokeLater(new Runnable()
         {
             public void run()
             {
-                // Anzeigen des Hauptfensters und verstecken des erstellen Fensters
                 mainGUI.setVisible(true);
                 createGUI.setVisible(false);
                 editGUI.setVisible(false);
-                dbManager.getTasks();
+                databaseManager.getTasks();
             }
         });
     }
@@ -45,8 +44,8 @@ public class TaskPlanner
         return editGUI;
     }
 
-    public static DBManager getDBManager()
+    public static DatabaseManager getDatabaseManager()
     {
-        return dbManager;
+        return databaseManager;
     }
 }
