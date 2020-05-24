@@ -2,9 +2,9 @@ package de.codersgen.task_planner;
 
 import java.awt.EventQueue;
 
-import de.codersggen.task_planner.guis.CreateTask;
-import de.codersggen.task_planner.guis.EditTask;
-import de.codersggen.task_planner.guis.Main;
+import de.codersgen.task_planner.guis.CreateTask;
+import de.codersgen.task_planner.guis.EditTask;
+import de.codersgen.task_planner.guis.Main;
 
 public class TaskPlanner
 {

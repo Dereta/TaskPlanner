@@ -1,4 +1,4 @@
-package de.codersggen.task_planner.guis;
+package de.codersgen.task_planner.guis;
 
 import java.awt.Dimension;
 import java.awt.Font;
